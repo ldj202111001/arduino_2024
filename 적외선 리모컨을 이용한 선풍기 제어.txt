@@ -1,0 +1,55 @@
+#include <IRremote.h>
+
+int IR_RECEIVE_PIN = 7; // 수신에 사용하는 핀 설정
+
+IRrecv IrReceiver(IR_RECEIVE_PIN);
+
+decode_results results; // 수신데이터를 받을 변수 선언
+
+#define REMOTE_VALUE_0 16738455
+#define REMOTE_VALUE_1 16724175
+#define REMOTE_VALUE_2 16718055
+#define REMOTE_VALUE_3 16743045   // 각각의 버튼값을 정의
+
+#define MOTOR_INA 10 // 선풍기 모터에 사용하는 핀
+#define MOTOR_INB 11
+
+void setup()
+{
+  Serial.begin(9600);
+  IrReceiver.enableIRIn(); // 데이터 수신 활성화
+}
+
+void loop()
+{
+  if(IrReceiver.decode(&results)) // 받은 데이터가 있다면
+  { // results.value: 받은 데이터중 value(값)
+    if(results.value == REMOTE_VALUE_0) // 모터를 끈다
+    {
+      Serial.println("number = 0");
+      analogWrite(MOTOR_INA, 0);
+      analogWrite(MOTOR_INB, 0);
+    }
+    else if(results.value == REMOTE_VALUE_1)
+    {
+      Serial.println("number = 1");
+      analogWrite(MOTOR_INA, 80);
+      analogWrite(MOTOR_INB, 0);
+    }
+    else if(results.value == REMOTE_VALUE_2) 
+    {
+      Serial.println("number = 2");
+      analogWrite(MOTOR_INA, 170);
+      analogWrite(MOTOR_INB, 0);
+    }
+    else if(results.value == REMOTE_VALUE_3)
+    {
+      Serial.println("number = 3");
+      analogWrite(MOTOR_INA, 255);
+      analogWrite(MOTOR_INB, 0);
+    }
+
+    IrReceiver.resume(); // 다음 데이터를 받기위한 초기화
+  }
+  delay(100);
+}
